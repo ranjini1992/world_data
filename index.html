@@ -75,13 +75,72 @@
       color:white;
     }
 
+    .ticks {
+      font: 10px sans-serif;
+    }
+
+    .track,
+    .track-inset,
+    .track-overlay {
+      stroke-linecap: round;
+    }
+
+    .track {
+      stroke: #000;
+      stroke-opacity: 0.3;
+      stroke-width: 10px;
+    }
+
+    .track-inset {
+      stroke: #ddd;
+      stroke-width: 8px;
+    }
+
+    .track-overlay {
+      pointer-events: stroke;
+      stroke-width: 50px;
+      stroke: transparent;
+      cursor: crosshair;
+    }
+
+    .handle {
+      fill: #fff;
+      stroke: #000;
+      stroke-opacity: 0.5;
+      stroke-width: 1.25px;
+    }
+
+
 </style>
 <body>
+  <h1>Important Child Qualities Around the World</h1>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v1.min.js"></script>
 <script src="d3-tip.js"></script>
+
 <script>
+var data = ["Independence", "Hard work", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience", "Self-expression"];
+
+var select = d3.select('body')
+  .append('select')
+    .attr('class','select')
+    .on('change',onchange)
+
+var options = select
+  .selectAll('option')
+  .data(data).enter()
+  .append('option')
+    .text(function (d) { return d; });
+
+    d3.select('body').append("br");
+
+function onchange() {
+  selectValue = d3.select('select').property('value')
+  /*d3.select('body')
+    .append('p')
+    .text(selectValue + ' is the last selected option.')*/
+};
 var format = d3.format(",");
 
 // Set tooltips
@@ -89,12 +148,16 @@ var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-              return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>" +  "<strong>Thrift: </strong><span class='details'>" + format(d.thrifty) +"</span>";
+              var toottip_text = "<strong>Country: </strong><span class='details'>" + d.properties.name + "</span>";
+              if(d.population) { 
+                toottip_text+=  "<br><strong>Thrift saving money and things: </strong><span class='details'>" + d.thrifty +"</span>";
+              }
+              return toottip_text;
             })
 
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            width = 1250 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom;
 
 var color = d3.scaleThreshold()
     .domain([10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000])
@@ -126,7 +189,7 @@ function ready(error, data, population) {
   var populationById = {};
   var thriftById = {};
 
-  population.forEach(function(d) { populationById[d.id] = +d.population; thriftById[d.id] = +d.thrifty; });
+  population.forEach(function(d) { populationById[d.id] = +d.population; thriftById[d.id] = d.thrifty; });
   data.features.forEach(function(d) { d.population = populationById[d.id]; d.thrifty = thriftById[d.id]; });
 
   svg.append("g")
@@ -164,6 +227,60 @@ function ready(error, data, population) {
        // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
       .attr("class", "names")
       .attr("d", path);
+}
+
+
+/*
+var svg = d3.select("svg"),
+    margin = {right: 50, left: 50},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height");*/
+
+var x = d3.scaleLinear()
+    .domain([0, 24])
+    .range([50, width-50])
+    .clamp(true);
+
+var slider = svg.append("g")
+    .attr("class", "slider")
+    .attr("transform", "translate(" + margin.left + "," + height*9/10 + ")");
+
+slider.append("line")
+    .attr("class", "track")
+    .attr("x1", x.range()[0])
+    .attr("x2", x.range()[1])
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-inset")
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-overlay")
+    .call(d3.drag()
+        .on("start.interrupt", function() { slider.interrupt(); })
+        .on("start drag", function() { hue(x.invert(d3.event.x)); }));
+
+slider.insert("g", ".track-overlay")
+    .attr("class", "ticks")
+    .attr("transform", "translate(0," + 18 + ")")
+  .selectAll("text")
+  .data(x.ticks(10))
+  .enter().append("text")
+    .attr("x", x)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return d + 1990 });
+
+var handle = slider.insert("circle", ".track-overlay")
+    .attr("class", "handle")
+    .attr("r", 9);
+
+slider.transition() // Gratuitous intro!
+    .duration(750)
+    .tween("hue", function() {
+      var i = d3.interpolate(0, 70);
+      return function(t) { hue(i(t)); };
+    });
+
+function hue(h) {
+  handle.attr("cx", x(h));
+ 
 }
 
 </script>
