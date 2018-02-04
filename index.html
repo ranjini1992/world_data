@@ -148,9 +148,10 @@ var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-              var toottip_text = "<strong>Country: </strong><span class='details'>" + d.properties.name + "</span>";
-              if(d.population) { 
+              var toottip_text = "<strong>Important Child Qualities in <span class='details'>" + d.properties.name + "</span></strong>";
+              if(d.thrifty) { 
                 toottip_text+=  "<br><strong>Thrift saving money and things: </strong><span class='details'>" + d.thrifty +"</span>";
+                toottip_text+=  "<br><strong>Independence: </strong><span class='details'>" + d.independence +"</span>";
               }
               return toottip_text;
             })
@@ -186,11 +187,45 @@ queue()
     .await(ready);
 
 function ready(error, data, population) {
-  var populationById = {};
   var thriftById = {};
+  var independenceById = {};
+  var hardworkById = {};
+  var responsibilityById = {};
+  var imaginationById = {};
+  var toleranceById = {};
+  var determinationById = {};
+  var religionById = {};
+  var unselfishnessById = {};
+  var obedienceById = {};
+  var selfById = {};
 
-  population.forEach(function(d) { populationById[d.id] = +d.population; thriftById[d.id] = d.thrifty; });
-  data.features.forEach(function(d) { d.population = populationById[d.id]; d.thrifty = thriftById[d.id]; });
+  population.forEach(function(d) { 
+    thriftById[d.id] = d.thrifty;
+    independenceById[d.id] = d.independence; 
+    hardworkById[d.id] = d.hardwork; 
+    responsibilityById[d.id] = d.responsibility; 
+    imaginationById[d.id] = d.imagination; 
+    toleranceById[d.id] = d.tolerance; 
+    determinationById[d.id] = d.determination; 
+    religionById[d.id] = d.religion; 
+    unselfishnessById[d.id] = d.unselfishness; 
+    obedienceById[d.id] = d.obedience; 
+    selfById[d.id] = d.self; 
+  });
+    
+  data.features.forEach(function(d) { 
+    d.thrifty = thriftById[d.id]; 
+    d.independence = independenceById[d.id];
+    d.hardwork = hardworkById[d.id];
+    d.responsibility = responsibilityById[d.id]; 
+    d.imagination = imaginationById[d.id];
+    d.tolerance = toleranceById[d.id]; 
+    d.determination = determinationById[d.id];
+    d.religion = religionById[d.id]; 
+    d.unselfishness = unselfishnessById[d.id];
+    d.obedience = obedienceById[d.id]; 
+    d.self = selfById[d.id];
+  });
 
   svg.append("g")
       .attr("class", "countries")
@@ -198,7 +233,7 @@ function ready(error, data, population) {
       .data(data.features)
     .enter().append("path")
       .attr("d", path)
-      .style("fill", function(d) { return color(populationById[d.id]); })
+      .style("fill", function(d) { return color(religionById[d.id]); })
       .style('stroke', 'white')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
