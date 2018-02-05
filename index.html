@@ -120,7 +120,7 @@
 <script src="d3-tip.js"></script>
 
 <script>
-var data = ["Independence", "Hard work", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience", "Self-expression"];
+var data = ["Independence", "Hardwork", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience", "Self-expression"];
 
 var select = d3.select('body')
   .append('select')
@@ -133,35 +133,73 @@ var options = select
   .append('option')
     .text(function (d) { return d; });
 
-    d3.select('body').append("br");
+d3.select('body').append("br");
 
 function onchange() {
   selectValue = d3.select('select').property('value')
   /*d3.select('body')
     .append('p')
     .text(selectValue + ' is the last selected option.')*/
+    colour_p = 95;
 };
 var format = d3.format(",");
 
 // Set tooltips
-var tip = d3.tip()
-            .attr('class', 'd3-tip')
-            .offset([-10, 0])
-            .html(function(d) {
-              var toottip_text = "<strong>Important Child Qualities in <span class='details'>" + d.properties.name + "</span></strong>";
-              if(d.thrifty) { 
-                toottip_text+=  "<br><strong>Thrift saving money and things: </strong><span class='details'>" + d.thrifty +"</span>";
-                toottip_text+=  "<br><strong>Independence: </strong><span class='details'>" + d.independence +"</span>";
-              }
-              return toottip_text;
-            })
 
+ var tip = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html(function(d) {
+            var toottip_text = "<strong>Country: <span class='details'>" + d.properties.name + "</span></strong>";
+            
+            dropdown_val = d3.select('select').property('value');
+            toottip_text+=  "<br><strong>" + dropdown_val +": </strong><span class='details'>" 
+
+            if(d.thrifty && dropdown_val == "Thrift saving money and things") { 
+              toottip_text+=  "<span class='details'>" + d.thrifty +"%</span>";
+            }
+            else if(d.independence && dropdown_val == "Independence") { 
+               toottip_text+=  "<span class='details'>" + d.independence +"%</span>";
+            }
+            else if(d.responsibility && dropdown_val == "Hardwork") { 
+              toottip_text+=  "<span class='details'>" + d.hardwork +"%</span>";
+            }
+            else if(d.thrifty && dropdown_val == "Feeling of Responsibility") { 
+              toottip_text+=  "<span class='details'>" + d.responsibility +"%</span>";
+            }
+            else if(d.imagination && dropdown_val == "Imagination") { 
+               toottip_text+=  "<span class='details'>" + d.imagination +"%</span>";
+            }
+            else if(d.tolerance && dropdown_val == "Tolerance and respect for other people") { 
+              toottip_text+=  "<span class='details'>" + d.tolerance +"%</span>";
+            }
+            else if(d.determination && dropdown_val == "Determination, perseverance") { 
+              toottip_text+= "<span class='details'>" +  d.determination +"%</span>";
+            }
+            else if(d.religion && dropdown_val == "Religious faith") { 
+               toottip_text+= "<span class='details'>" +  d.religion +"%</span>";
+            }
+            else if(d.unselfishness && dropdown_val == "Unselfishness") { 
+               toottip_text+= "<span class='details'>" + d.unselfishness +"%</span>";
+            }
+            else if(d.obedience && dropdown_val == "Obedience") { 
+               toottip_text+= "<span class='details'>" + d.obedience +"%</span>";
+            }
+            else if(d.self && dropdown_val == "Self-expression") { 
+               toottip_text+= "<span class='details'>" +  d.self +"%</span>";
+            }else{
+              toottip_text+=  "Unknown";
+            }
+            return toottip_text;
+          })
+
+var colour_p = 45;
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
             width = 1250 - margin.left - margin.right,
             height = 600 - margin.top - margin.bottom;
 
 var color = d3.scaleThreshold()
-    .domain([10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000])
+    .domain([10,20,30,40,50,60,70,80,90,100])
     .range(["rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"]);
 
 var path = d3.geoPath();
@@ -186,7 +224,7 @@ queue()
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_population.tsv")
     .await(ready);
 
-function ready(error, data, population) {
+function ready(error, data, world_data) {
   var thriftById = {};
   var independenceById = {};
   var hardworkById = {};
@@ -199,7 +237,7 @@ function ready(error, data, population) {
   var obedienceById = {};
   var selfById = {};
 
-  population.forEach(function(d) { 
+  world_data.forEach(function(d) { 
     thriftById[d.id] = d.thrifty;
     independenceById[d.id] = d.independence; 
     hardworkById[d.id] = d.hardwork; 
@@ -233,7 +271,7 @@ function ready(error, data, population) {
       .data(data.features)
     .enter().append("path")
       .attr("d", path)
-      .style("fill", function(d) { return color(religionById[d.id]); })
+      .style("fill", function(d) { if(d.self){return color(d.self);}return color(10); })
       .style('stroke', 'white')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
