@@ -134,14 +134,9 @@ var options = select
     .text(function (d) { return d; });
 
 d3.select('body').append("br");
+var selectValue;
 
-function onchange() {
-  selectValue = d3.select('select').property('value')
-  /*d3.select('body')
-    .append('p')
-    .text(selectValue + ' is the last selected option.')*/
-    colour_p = 95;
-};
+
 var format = d3.format(",");
 
 // Set tooltips
@@ -224,18 +219,22 @@ queue()
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_population.tsv")
     .await(ready);
 
+var countries;
+var thriftById = {};
+var independenceById = {};
+var hardworkById = {};
+var responsibilityById = {};
+var imaginationById = {};
+var toleranceById = {};
+var determinationById = {};
+var religionById = {};
+var unselfishnessById = {};
+var obedienceById = {};
+var selfById = {};
+
+
 function ready(error, data, world_data) {
-  var thriftById = {};
-  var independenceById = {};
-  var hardworkById = {};
-  var responsibilityById = {};
-  var imaginationById = {};
-  var toleranceById = {};
-  var determinationById = {};
-  var religionById = {};
-  var unselfishnessById = {};
-  var obedienceById = {};
-  var selfById = {};
+  
 
   world_data.forEach(function(d) { 
     thriftById[d.id] = d.thrifty;
@@ -265,13 +264,23 @@ function ready(error, data, world_data) {
     d.self = selfById[d.id];
   });
 
-  svg.append("g")
+   countries = svg.append("g")
       .attr("class", "countries")
     .selectAll("path")
       .data(data.features)
     .enter().append("path")
       .attr("d", path)
-      .style("fill", function(d) { if(d.self){return color(d.self);}return color(10); })
+      .style("fill", function(d) { 
+        var selectValue = d3.select('select').property('value');
+        if(d.thrifty && selectValue == "Thrift saving money and things") { 
+              return color(d.thrifty);
+            }
+            else if(d.independence && selectValue == "Independence") { 
+               return color(d.independence);
+            }
+
+        return color(10); 
+      })
       .style('stroke', 'white')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
@@ -355,6 +364,51 @@ function hue(h) {
   handle.attr("cx", x(h));
  
 }
+
+function onchange() {
+  var dropdown_val = d3.select('select').property('value');
+
+  for(var i = 0; i < countries._groups[0].length; i ++){
+
+    var id = countries['_groups'][0][i]['__data__']['id'];
+
+    if(thriftById[id] && dropdown_val == "Thrift saving money and things") { 
+      countries._groups[0][i].style.fill = color(thriftById[id]);
+    }
+    else if(independenceById[id] && dropdown_val == "Independence") { 
+      countries._groups[0][i].style.fill = color(independenceById[id]);
+    }
+    else if(hardworkById[id] && dropdown_val == "Hardwork") { 
+      countries._groups[0][i].style.fill = color(hardworkById[id]);
+    }
+    else if(responsibilityById[id] && dropdown_val == "Feeling of Responsibility") { 
+      countries._groups[0][i].style.fill = color(responsibilityById[id]);
+    }
+    else if(imaginationById[id] && dropdown_val == "Imagination") { 
+       countries._groups[0][i].style.fill = color(imaginationById[id]);
+    }
+    else if(toleranceById[id] && dropdown_val == "Tolerance and respect for other people") { 
+      countries._groups[0][i].style.fill = color(toleranceById[id]);
+    }
+    else if(determinationById[id] && dropdown_val == "Determination, perseverance") { 
+      countries._groups[0][i].style.fill = color(determinationById[id]);
+    }
+    else if(religionById[id] && dropdown_val == "Religious faith") { 
+      countries._groups[0][i].style.fill = color(religionById[id]);
+    }
+    else if(unselfishnessById[id] && dropdown_val == "Unselfishness") { 
+       countries._groups[0][i].style.fill = color(unselfishnessById[id]);
+    }
+    else if(obedienceById[id] && dropdown_val == "Obedience") { 
+      countries._groups[0][i].style.fill = color(obedienceById[id]);
+    }
+    else if(selfById[id] && dropdown_val == "Self-expression") { 
+       countries._groups[0][i].style.fill = color(selfById[id]);
+    }
+
+
+  }
+};
 
 </script>
 </body>
