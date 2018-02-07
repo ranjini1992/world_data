@@ -156,10 +156,10 @@ var format = d3.format(",");
             else if(d.independence && dropdown_val == "Independence") { 
                toottip_text+=  "<span class='details'>" + d.independence +"%</span>";
             }
-            else if(d.responsibility && dropdown_val == "Hardwork") { 
+            else if(d.hardwork && dropdown_val == "Hardwork") { 
               toottip_text+=  "<span class='details'>" + d.hardwork +"%</span>";
             }
-            else if(d.thrifty && dropdown_val == "Feeling of Responsibility") { 
+            else if(d.responsibility && dropdown_val == "Feeling of Responsibility") { 
               toottip_text+=  "<span class='details'>" + d.responsibility +"%</span>";
             }
             else if(d.imagination && dropdown_val == "Imagination") { 
@@ -194,7 +194,7 @@ var margin = {top: 0, right: 0, bottom: 0, left: 0},
             height = 600 - margin.top - margin.bottom;
 
 var color = d3.scaleThreshold()
-    .domain([10,20,30,40,50,60,70,80,90,100])
+    .domain([0,10,20,30,40,50,60,70,80,90])
     .range(["rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"]);
 
 var path = d3.geoPath();
@@ -217,6 +217,9 @@ svg.call(tip);
 queue()
     .defer(d3.json, "https://ranjini1992.github.io/world_data/world_countries.json")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_population.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
     .await(ready);
 
 var countries;
@@ -233,7 +236,7 @@ var obedienceById = {};
 var selfById = {};
 
 
-function ready(error, data, world_data) {
+function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
   
 
   world_data.forEach(function(d) { 
@@ -249,7 +252,7 @@ function ready(error, data, world_data) {
     obedienceById[d.id] = d.obedience; 
     selfById[d.id] = d.self; 
   });
-    
+
   data.features.forEach(function(d) { 
     d.thrifty = thriftById[d.id]; 
     d.independence = independenceById[d.id];
@@ -271,15 +274,10 @@ function ready(error, data, world_data) {
     .enter().append("path")
       .attr("d", path)
       .style("fill", function(d) { 
-        var selectValue = d3.select('select').property('value');
-        if(d.thrifty && selectValue == "Thrift saving money and things") { 
-              return color(d.thrifty);
-            }
-            else if(d.independence && selectValue == "Independence") { 
-               return color(d.independence);
-            }
-
-        return color(10); 
+         if(d.independence) { 
+            return color(d.independence);
+          }
+        return "rgb(165, 165, 165)"; 
       })
       .style('stroke', 'white')
       .style('stroke-width', 1.5)
@@ -343,11 +341,11 @@ slider.insert("g", ".track-overlay")
     .attr("class", "ticks")
     .attr("transform", "translate(0," + 18 + ")")
   .selectAll("text")
-  .data(x.ticks(10))
+  .data(x.ticks(4))
   .enter().append("text")
     .attr("x", x)
     .attr("text-anchor", "middle")
-    .text(function(d) { return d + 1990 });
+    .text(function(d) { return d + 1995 });
 
 var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
