@@ -159,7 +159,7 @@ var format = d3.format(",");
             else if(d.hardwork && dropdown_val == "Hardwork") { 
               toottip_text+=  "<span class='details'>" + d.hardwork +"%</span>";
             }
-            else if(d.responsibility && dropdown_val == "Feeling of Responsibility") { 
+            else if(d.responsibility && dropdown_val == "Feeling of responsibility") { 
               toottip_text+=  "<span class='details'>" + d.responsibility +"%</span>";
             }
             else if(d.imagination && dropdown_val == "Imagination") { 
@@ -217,9 +217,9 @@ svg.call(tip);
 queue()
     .defer(d3.json, "https://ranjini1992.github.io/world_data/world_countries.json")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_population.tsv")
-   // .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
-  //  .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
-  //  .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
     .await(ready);
 
 var countries;
@@ -236,8 +236,9 @@ var obedienceById = {};
 var selfById = {};
 
 
-//function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
-  function ready(error, data, world_data) {
+
+function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
+  //function ready(error, data, world_data) {
 
   world_data.forEach(function(d) { 
     thriftById[d.id] = d.thrifty;
@@ -251,6 +252,18 @@ var selfById = {};
     unselfishnessById[d.id] = d.unselfishness; 
     obedienceById[d.id] = d.obedience; 
     selfById[d.id] = d.self; 
+  });
+
+  world_data_old.forEach(function(d) { 
+   
+  });
+
+   world_data_older.forEach(function(d) { 
+   
+  });
+
+  world_data_oldest.forEach(function(d) { 
+   
   });
 
   data.features.forEach(function(d) { 
@@ -320,7 +333,7 @@ var x = d3.scaleLinear()
     .domain([0, 24])
     .range([50, width-50])
     .clamp(true);
-
+/*
 var slider = svg.append("g")
     .attr("class", "slider")
     .attr("transform", "translate(" + margin.left + "," + height*9/10 + ")");
@@ -356,7 +369,7 @@ slider.transition() // Gratuitous intro!
     .tween("hue", function() {
       var i = d3.interpolate(0, 70);
       return function(t) { hue(i(t)); };
-    });
+    });*/
 
 function hue(h) {
   handle.attr("cx", x(h));
@@ -379,7 +392,7 @@ function onchange() {
     else if(hardworkById[id] && dropdown_val == "Hardwork") { 
       countries._groups[0][i].style.fill = color(hardworkById[id]);
     }
-    else if(responsibilityById[id] && dropdown_val == "Feeling of Responsibility") { 
+    else if(responsibilityById[id] && dropdown_val == "Feeling of responsibility") { 
       countries._groups[0][i].style.fill = color(responsibilityById[id]);
     }
     else if(imaginationById[id] && dropdown_val == "Imagination") { 
