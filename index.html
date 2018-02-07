@@ -217,9 +217,9 @@ svg.call(tip);
 queue()
     .defer(d3.json, "https://ranjini1992.github.io/world_data/world_countries.json")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_population.tsv")
-    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
-    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
-    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
+   // .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
+  //  .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
+  //  .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
     .await(ready);
 
 var countries;
@@ -236,8 +236,8 @@ var obedienceById = {};
 var selfById = {};
 
 
-function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
-  
+//function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
+  function ready(error, data, world_data) {
 
   world_data.forEach(function(d) { 
     thriftById[d.id] = d.thrifty;
