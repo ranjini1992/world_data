@@ -120,7 +120,7 @@
 <script src="d3-tip.js"></script>
 
 <script>
-var data = ["Independence", "Hardwork", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience", "Self-expression"];
+var data = ["Independence", "Hardwork", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience"];
 
 var select = d3.select('body')
   .append('select')
@@ -150,39 +150,37 @@ var format = d3.format(",");
             dropdown_val = d3.select('select').property('value');
             toottip_text+=  "<br><strong>" + dropdown_val +": </strong><span class='details'>" 
 
-            if(d.thrifty && dropdown_val == "Thrift saving money and things") { 
-              toottip_text+=  "<span class='details'>" + d.thrifty +"%</span>";
+            if(d["thrifty_" + year] && dropdown_val == "Thrift saving money and things") { 
+              toottip_text+=  "<span class='details'>" + d["thrifty_" + year] +"%</span>";
             }
-            else if(d.independence && dropdown_val == "Independence") { 
-               toottip_text+=  "<span class='details'>" + d.independence +"%</span>";
+            else if(d["independence_" + year] && dropdown_val == "Independence") { 
+               toottip_text+=  "<span class='details'>" + d["independence_" + year] +"%</span>";
             }
-            else if(d.hardwork && dropdown_val == "Hardwork") { 
-              toottip_text+=  "<span class='details'>" + d.hardwork +"%</span>";
+            else if(d["hardwork_" + year]  && dropdown_val == "Hardwork") { 
+              toottip_text+=  "<span class='details'>" + d["hardwork_" + year] +"%</span>";
             }
-            else if(d.responsibility && dropdown_val == "Feeling of responsibility") { 
-              toottip_text+=  "<span class='details'>" + d.responsibility +"%</span>";
+            else if(d["responsibility_" + year] && dropdown_val == "Feeling of responsibility") { 
+              toottip_text+=  "<span class='details'>" + d["responsibility_" + year] +"%</span>";
             }
-            else if(d.imagination && dropdown_val == "Imagination") { 
-               toottip_text+=  "<span class='details'>" + d.imagination +"%</span>";
+            else if(d["imagination_" + year] && dropdown_val == "Imagination") { 
+               toottip_text+=  "<span class='details'>" + d["imagination_" + year] +"%</span>";
             }
-            else if(d.tolerance && dropdown_val == "Tolerance and respect for other people") { 
-              toottip_text+=  "<span class='details'>" + d.tolerance +"%</span>";
+            else if(d["tolerance_" + year] && dropdown_val == "Tolerance and respect for other people") { 
+              toottip_text+=  "<span class='details'>" + d["tolerance_" + year] +"%</span>";
             }
-            else if(d.determination && dropdown_val == "Determination, perseverance") { 
-              toottip_text+= "<span class='details'>" +  d.determination +"%</span>";
+            else if(d["determination_" + year] && dropdown_val == "Determination, perseverance") { 
+              toottip_text+= "<span class='details'>" +  d["determination_" + year] +"%</span>";
             }
-            else if(d.religion && dropdown_val == "Religious faith") { 
-               toottip_text+= "<span class='details'>" +  d.religion +"%</span>";
+            else if(d["religion_" + year] && dropdown_val == "Religious faith") { 
+               toottip_text+= "<span class='details'>" +  d["religion_" + year] +"%</span>";
             }
-            else if(d.unselfishness && dropdown_val == "Unselfishness") { 
-               toottip_text+= "<span class='details'>" + d.unselfishness +"%</span>";
+            else if(d["unselfishness_" + year] && dropdown_val == "Unselfishness") { 
+               toottip_text+= "<span class='details'>" + d["unselfishness_" + year] +"%</span>";
             }
-            else if(d.obedience && dropdown_val == "Obedience") { 
-               toottip_text+= "<span class='details'>" + d.obedience +"%</span>";
+            else if(d["obedience_" + year] && dropdown_val == "Obedience") { 
+               toottip_text+= "<span class='details'>" + d["obedience_" + year] +"%</span>";
             }
-            else if(d.self && dropdown_val == "Self-expression") { 
-               toottip_text+= "<span class='details'>" +  d.self +"%</span>";
-            }else{
+            else{
               toottip_text+=  "Unknown";
             }
             return toottip_text;
@@ -223,72 +221,106 @@ queue()
     .await(ready);
 
 var countries;
-var thriftById = {};
-var independenceById = {};
-var hardworkById = {};
-var responsibilityById = {};
-var imaginationById = {};
-var toleranceById = {};
-var determinationById = {};
-var religionById = {};
-var unselfishnessById = {};
-var obedienceById = {};
-var selfById = {};
+var year = 0;
+var thriftById = [{},{},{},{}];
+var independenceById =  [{},{},{},{}];
+var hardworkById =  [{},{},{},{}];
+var responsibilityById =  [{},{},{},{}];
+var imaginationById =  [{},{},{},{}];
+var toleranceById =  [{},{},{},{}];
+var determinationById =  [{},{},{},{}];
+var religionById =  [{},{},{},{}];
+var unselfishnessById =  [{},{},{},{}];
+var obedienceById = [{},{},{},{}];
 
 
 
 function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
   //function ready(error, data, world_data) {
 
-  world_data.forEach(function(d) { 
-    thriftById[d.id] = d.thrifty;
-    independenceById[d.id] = d.independence; 
-    hardworkById[d.id] = d.hardwork; 
-    responsibilityById[d.id] = d.responsibility; 
-    imaginationById[d.id] = d.imagination; 
-    toleranceById[d.id] = d.tolerance; 
-    determinationById[d.id] = d.determination; 
-    religionById[d.id] = d.religion; 
-    unselfishnessById[d.id] = d.unselfishness; 
-    obedienceById[d.id] = d.obedience; 
-    selfById[d.id] = d.self; 
-  });
-
-  world_data_old.forEach(function(d) { 
+  world_data_oldest.forEach(function(d) { 
+    var year = 0;
+    thriftById[year][d.id] = d.thrifty;
+    independenceById[year][d.id] = d.independence; 
+    hardworkById[year][d.id] = d.hardwork; 
+    responsibilityById[year][d.id] = d.responsibility; 
+    imaginationById[year][d.id] = d.imagination; 
+    toleranceById[year][d.id] = d.tolerance; 
+    determinationById[year][d.id] = d.determination; 
+    religionById[year][d.id] = d.religion; 
+    unselfishnessById[year][d.id] = d.unselfishness; 
+    obedienceById[year][d.id] = d.obedience; 
    
   });
+
 
    world_data_older.forEach(function(d) { 
-   
+    var year = 1;
+    thriftById[year][d.id] = d.thrifty;
+    independenceById[year][d.id] = d.independence; 
+    hardworkById[year][d.id] = d.hardwork; 
+    responsibilityById[year][d.id] = d.responsibility; 
+    imaginationById[year][d.id] = d.imagination; 
+    toleranceById[year][d.id] = d.tolerance; 
+    determinationById[year][d.id] = d.determination; 
+    religionById[year][d.id] = d.religion; 
+    unselfishnessById[year][d.id] = d.unselfishness; 
+    obedienceById[year][d.id] = d.obedience; 
+     
   });
-
-  world_data_oldest.forEach(function(d) { 
-   
+  world_data_old.forEach(function(d) { 
+    var year = 2;
+    thriftById[year][d.id] = d.thrifty;
+    independenceById[year][d.id] = d.independence; 
+    hardworkById[year][d.id] = d.hardwork; 
+    responsibilityById[year][d.id] = d.responsibility; 
+    imaginationById[year][d.id] = d.imagination; 
+    toleranceById[year][d.id] = d.tolerance; 
+    determinationById[year][d.id] = d.determination; 
+    religionById[year][d.id] = d.religion; 
+    unselfishnessById[year][d.id] = d.unselfishness; 
+    obedienceById[year][d.id] = d.obedience; 
+     
   });
+  world_data.forEach(function(d) { 
+    var year = 3;
+    thriftById[year][d.id] = d.thrifty;
+    independenceById[year][d.id] = d.independence; 
+    hardworkById[year][d.id] = d.hardwork; 
+    responsibilityById[year][d.id] = d.responsibility; 
+    imaginationById[year][d.id] = d.imagination; 
+    toleranceById[year][d.id] = d.tolerance; 
+    determinationById[year][d.id] = d.determination; 
+    religionById[year][d.id] = d.religion; 
+    unselfishnessById[year][d.id] = d.unselfishness; 
+    obedienceById[year][d.id] = d.obedience; 
+      
+    });
 
   data.features.forEach(function(d) { 
-    d.thrifty = thriftById[d.id]; 
-    d.independence = independenceById[d.id];
-    d.hardwork = hardworkById[d.id];
-    d.responsibility = responsibilityById[d.id]; 
-    d.imagination = imaginationById[d.id];
-    d.tolerance = toleranceById[d.id]; 
-    d.determination = determinationById[d.id];
-    d.religion = religionById[d.id]; 
-    d.unselfishness = unselfishnessById[d.id];
-    d.obedience = obedienceById[d.id]; 
-    d.self = selfById[d.id];
+    for(var i= 0; i < 4; i++ ){
+      d["thrifty_" + i] = thriftById[i][d.id]; 
+      d["independence_"+ i]= independenceById[i][d.id];
+      d["hardwork_" + i] = hardworkById[i][d.id];
+      d["responsibility_" + i] = responsibilityById[i][d.id]; 
+      d["imagination_" + i] = imaginationById[i][d.id];
+      d["tolerance_" + i] = toleranceById[i][d.id]; 
+      d["determination_" + i] = determinationById[i][d.id];
+      d["religion_" + i] = religionById[i][d.id]; 
+      d["unselfishness_" + i] = unselfishnessById[i][d.id];
+      d["obedience_" + i] = obedienceById[i][d.id]; 
+    }
   });
 
-   countries = svg.append("g")
+  countries = svg.append("g")
       .attr("class", "countries")
     .selectAll("path")
       .data(data.features)
     .enter().append("path")
       .attr("d", path)
       .style("fill", function(d) { 
-         if(d.independence) { 
-            return color(d.independence);
+         if(d.independence_0) { 
+            return color(d.independence_0);
           }
         return "rgb(165, 165, 165)"; 
       })
@@ -323,20 +355,21 @@ function ready(error, data, world_data, world_data_old, world_data_older, world_
 }
 
 
-/*
+
 var svg = d3.select("svg"),
     margin = {right: 50, left: 50},
     width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height");*/
+    height = +svg.attr("height");
 
 var x = d3.scaleLinear()
-    .domain([0, 24])
-    .range([50, width-50])
+    .domain([0, 20])
+    .range([5, width-5])
     .clamp(true);
-/*
+
 var slider = svg.append("g")
     .attr("class", "slider")
     .attr("transform", "translate(" + margin.left + "," + height*9/10 + ")");
+    
 
 slider.append("line")
     .attr("class", "track")
@@ -364,58 +397,78 @@ var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
     .attr("r", 9);
 
-slider.transition() // Gratuitous intro!
-    .duration(750)
+/*slider.transition() // Gratuitous intro!
+    .duration(0)
     .tween("hue", function() {
-      var i = d3.interpolate(0, 70);
+      var i = d3.interpolate(0, 0);
       return function(t) { hue(i(t)); };
     });*/
 
 function hue(h) {
-  handle.attr("cx", x(h));
- 
+  var oldval = handle.attr("cx");
+  if(!oldval){oldval = 5}
+  var newval = x(h);
+  if(newval >= 0 && newval < 200  ){
+    handle.attr("cx", 5);
+    year = 0;
+  }else if(newval >= 200 && newval < 500){
+    handle.attr("cx", 290);
+    year = 1;
+  }
+  else if(newval >= 500 && newval < 800){
+    handle.attr("cx", 575);
+    year = 2;
+  }
+  else if(newval >= 800 && newval < 1100){
+    handle.attr("cx", 860);
+    year = 3;
+    
+  }else{
+    handle.attr("cx", 1145);
+  }
+  newval = handle.attr("cx");
+  if(oldval != newval) {  onchange(); }
 }
 
 function onchange() {
   var dropdown_val = d3.select('select').property('value');
 
-  for(var i = 0; i < countries._groups[0].length; i ++){
-
+  for(var i = 0; i < countries['_groups'][0].length; i ++){
+ 
     var id = countries['_groups'][0][i]['__data__']['id'];
 
-    if(thriftById[id] && dropdown_val == "Thrift saving money and things") { 
-      countries._groups[0][i].style.fill = color(thriftById[id]);
+    if(thriftById[year][id] && dropdown_val == "Thrift saving money and things") { 
+     
+      countries._groups[0][i].style.fill = color(thriftById[year][id]);
     }
-    else if(independenceById[id] && dropdown_val == "Independence") { 
-      countries._groups[0][i].style.fill = color(independenceById[id]);
+    else if(independenceById[year][id] && dropdown_val == "Independence") { 
+      countries._groups[0][i].style.fill = color(independenceById[year][id]);
     }
-    else if(hardworkById[id] && dropdown_val == "Hardwork") { 
-      countries._groups[0][i].style.fill = color(hardworkById[id]);
+    else if(hardworkById[year][id] && dropdown_val == "Hardwork") { 
+      countries._groups[0][i].style.fill = color(hardworkById[year][id]);
     }
-    else if(responsibilityById[id] && dropdown_val == "Feeling of responsibility") { 
-      countries._groups[0][i].style.fill = color(responsibilityById[id]);
+    else if(responsibilityById[year][id] && dropdown_val == "Feeling of responsibility") { 
+      countries._groups[0][i].style.fill = color(responsibilityById[year][id]);
     }
-    else if(imaginationById[id] && dropdown_val == "Imagination") { 
-       countries._groups[0][i].style.fill = color(imaginationById[id]);
+    else if(imaginationById[year][id] && dropdown_val == "Imagination") { 
+       countries._groups[0][i].style.fill = color(imaginationById[year][id]);
     }
-    else if(toleranceById[id] && dropdown_val == "Tolerance and respect for other people") { 
-      countries._groups[0][i].style.fill = color(toleranceById[id]);
+    else if(toleranceById[year][id] && dropdown_val == "Tolerance and respect for other people") { 
+      countries._groups[0][i].style.fill = color(toleranceById[year][id]);
     }
-    else if(determinationById[id] && dropdown_val == "Determination, perseverance") { 
-      countries._groups[0][i].style.fill = color(determinationById[id]);
+    else if(determinationById[year][id] && dropdown_val == "Determination, perseverance") { 
+      countries._groups[0][i].style.fill = color(determinationById[year][id]);
     }
-    else if(religionById[id] && dropdown_val == "Religious faith") { 
-      countries._groups[0][i].style.fill = color(religionById[id]);
+    else if(religionById[year][id] && dropdown_val == "Religious faith") { 
+      countries._groups[0][i].style.fill = color(religionById[year][id]);
     }
-    else if(unselfishnessById[id] && dropdown_val == "Unselfishness") { 
-       countries._groups[0][i].style.fill = color(unselfishnessById[id]);
+    else if(unselfishnessById[year][id] && dropdown_val == "Unselfishness") { 
+       countries._groups[0][i].style.fill = color(unselfishnessById[year][id]);
     }
-    else if(obedienceById[id] && dropdown_val == "Obedience") { 
-      countries._groups[0][i].style.fill = color(obedienceById[id]);
+    else if(obedienceById[year][id] && dropdown_val == "Obedience") { 
+      countries._groups[0][i].style.fill = color(obedienceById[year][id]);
     }
-    else if(selfById[id] && dropdown_val == "Self-expression") { 
-       countries._groups[0][i].style.fill = color(selfById[id]);
-    }
+
 
 
   }
