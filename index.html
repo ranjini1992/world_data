@@ -391,7 +391,7 @@ slider.insert("g", ".track-overlay")
   .enter().append("text")
     .attr("x", x)
     .attr("text-anchor", "middle")
-    .text(function(d) { return d + 1995 });
+    .text(function(d) { if(d < 20) { return (d + 1995) + "-" + (d + 1995 + 4) } });
 
 var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
