@@ -2,11 +2,11 @@
 <meta charset="utf-8">
 <style>
 
-  .names {
-  fill: none;
-  stroke: #fff;
-  stroke-linejoin: round;
-  }
+    .names {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+    }
 
     /* Tooltip CSS */
     .d3-tip {
@@ -67,10 +67,6 @@
       left: 100%;
     }
 
-/*    text{
-      pointer-events:none;
-    }*/
-
     .details{
       color:white;
     }
@@ -110,10 +106,40 @@
       stroke-width: 1.25px;
     }
 
-
+    .box{
+      width:50px;
+      height:20px;
+      float:right;
+      font-size: 12px;
+      text-align: center;
+    }
+ 
+    .gray{ background:rgb(165, 165, 165);}
+    .blue1{ background:rgb(222,235,247);}
+    .blue2{ background:rgb(198,219,239);}
+    .blue3{ background:rgb(158,202,225);}
+    .blue4{ background:rgb(107,174,214);}
+    .blue5{ background:rgb(66,146,198);}
+    .blue6{ background:rgb(33,113,181);}
+    .blue7{ background:rgb(8,81,156);}
+    .blue8{ background:rgb(8,48,107);}
+    .blue9{ background:rgb(3,19,43);}
 </style>
 <body>
   <h1>Important Child Qualities Around the World</h1>
+  <h6 style ="float:right"> 100% </h6>
+  <div class="box blue9"></div>
+  <div class="box blue8"></div>
+  <div class="box blue7"></div>
+  <div class="box blue6"></div>
+  <div class="box blue5"></div>
+  <div class="box blue4"></div>
+  <div class="box blue3"></div>
+  <div class="box blue2"></div>
+  <div class="box blue1"></div>
+  <h6 style ="float:right"> 0% </h6>
+  <div class="box gray"> No data </div>
+  <h6 style ="float:right"> </h6>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v1.min.js"></script>
@@ -133,7 +159,6 @@ var options = select
   .append('option')
     .text(function (d) { return d; });
 
-d3.select('body').append("br");
 var selectValue;
 
 
@@ -181,7 +206,7 @@ var format = d3.format(",");
                toottip_text+= "<span class='details'>" + d["obedience_" + year] +"%</span>";
             }
             else{
-              toottip_text+=  "Unknown";
+              toottip_text+=  "No data in this time period";
             }
             return toottip_text;
           })
