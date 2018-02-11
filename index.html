@@ -113,7 +113,14 @@
       font-size: 12px;
       text-align: center;
     }
- 
+
+  .box2{
+      width:90px;
+      height:20px;
+      float:right;
+      font-size: 15px;
+      text-align: center;
+    }
     .gray{ background:rgb(165, 165, 165);}
     .blue1{ background:rgb(222,235,247);}
     .blue2{ background:rgb(198,219,239);}
@@ -124,10 +131,12 @@
     .blue7{ background:rgb(8,81,156);}
     .blue8{ background:rgb(8,48,107);}
     .blue9{ background:rgb(3,19,43);}
+    .blue10{ background:rgb(0,0,0);}
 </style>
 <body>
   <h1>Important Child Qualities Around the World</h1>
   <h6 style ="float:right"> 100% </h6>
+  <div class="box blue10"></div>
   <div class="box blue9"></div>
   <div class="box blue8"></div>
   <div class="box blue7"></div>
@@ -138,8 +147,8 @@
   <div class="box blue2"></div>
   <div class="box blue1"></div>
   <h6 style ="float:right"> 0% </h6>
-  <div class="box gray"> No data </div>
-  <h6 style ="float:right"> </h6>
+  <div class="box2 gray"> No data </div>
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v1.min.js"></script>
@@ -217,8 +226,8 @@ var margin = {top: 0, right: 0, bottom: 0, left: 0},
             height = 600 - margin.top - margin.bottom;
 
 var color = d3.scaleThreshold()
-    .domain([0,10,20,30,40,50,60,70,80,90])
-    .range(["rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"]);
+    .domain([10,20,30,40,50,60,70,80,90,100])
+    .range(["rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43), rgb(0,0,0)"]);
 
 var path = d3.geoPath();
 
@@ -461,15 +470,15 @@ function onchange() {
   for(var i = 0; i < countries['_groups'][0].length; i ++){
  
     var id = countries['_groups'][0][i]['__data__']['id'];
+    countries._groups[0][i].style.fill = "rgb(165, 165, 165)";
 
-    if(thriftById[year][id] && dropdown_val == "Thrift saving money and things") { 
-     
+    if(thriftById[year][id] && dropdown_val == "Thrift saving money and things") {    
       countries._groups[0][i].style.fill = color(thriftById[year][id]);
     }
     else if(independenceById[year][id] && dropdown_val == "Independence") { 
       countries._groups[0][i].style.fill = color(independenceById[year][id]);
     }
-    else if(hardworkById[year][id] && dropdown_val == "Hardwork") { 
+     if(hardworkById[year][id] && dropdown_val == "Hardwork") { 
       countries._groups[0][i].style.fill = color(hardworkById[year][id]);
     }
     else if(responsibilityById[year][id] && dropdown_val == "Feeling of responsibility") { 
