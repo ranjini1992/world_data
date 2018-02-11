@@ -8,7 +8,6 @@
     stroke-linejoin: round;
     }
 
-    /* Tooltip CSS */
     .d3-tip {
     line-height: 1.5;
     font-weight: 400;
@@ -298,7 +297,6 @@ var obedienceById = [{},{},{},{}];
 
 
 function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
-  //function ready(error, data, world_data) {
 
   world_data_oldest.forEach(function(d) { 
     var year = 0;
@@ -460,13 +458,6 @@ var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
     .attr("r", 9);
 
-/*slider.transition() // Gratuitous intro!
-    .duration(0)
-    .tween("hue", function() {
-      var i = d3.interpolate(0, 0);
-      return function(t) { hue(i(t)); };
-    });*/
-
 function hue(h) {
   var oldval = handle.attr("cx");
   if(!oldval){oldval = 5}
@@ -527,9 +518,6 @@ function onchange() {
     else if(obedienceById[year][id] && dropdown_val == "Obedience") { 
       countries._groups[0][i].style.fill = color(obedienceById[year][id]);
     }
-
-
-
   }
 };
 
