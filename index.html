@@ -20,7 +20,6 @@
     pointer-events: none;
     }
 
-    /* Creates a small triangle extender for the tooltip */
     .d3-tip:after {      
       box-sizing: border-box;
       display: inline;
@@ -33,7 +32,6 @@
       
     }
 
-    /* Northward tooltips */
     .d3-tip.n:after {
       content: "\25BC";
       margin: -1px 0 0 0;
@@ -42,7 +40,6 @@
       text-align: center;
     }
 
-    /* Eastward tooltips */
     .d3-tip.e:after {
       content: "\25C0";
       margin: -4px 0 0 0;
@@ -50,7 +47,6 @@
       left: -8px;
     }
 
-    /* Southward tooltips */
     .d3-tip.s:after {
       content: "\25B2";
       margin: 0 0 1px 0;
@@ -59,7 +55,6 @@
       text-align: center;
     }
 
-    /* Westward tooltips */
     .d3-tip.w:after {
       content: "\25B6";
       margin: -4px 0 0 -1px;
@@ -72,7 +67,7 @@
     }
 
     .ticks {
-      font: 10px sans-serif;
+      font: 12px sans-serif;
     }
 
     .track,
@@ -126,12 +121,25 @@
     .blue2{ background:rgb(198,219,239);}
     .blue3{ background:rgb(158,202,225);}
     .blue4{ background:rgb(107,174,214);}
-    .blue5{ background:rgb(66,146,198);}
-    .blue6{ background:rgb(33,113,181);}
-    .blue7{ background:rgb(8,81,156);}
-    .blue8{ background:rgb(8,48,107);}
-    .blue9{ background:rgb(3,19,43);}
-    .blue10{ background:rgb(0,0,0);}
+    .blue5{ background:rgb(77, 159, 209);}
+    .blue6{ background:rgb(47, 133, 206);}
+    .blue7{ background:rgb(33, 96, 160);}
+    .blue8{ background:rgb(23, 83, 145);}
+    .blue9{ background:rgb(13, 68, 124);}
+    .blue10{ background:rgb(5, 58, 112);}
+
+    .stop-left {
+        stop-color: #000833;  
+    }
+
+    .stop-right {
+        stop-color: #001c17;  
+    }
+
+    .filled {
+        fill: url(#mainGradient);
+    }
+
 </style>
 <body>
   <h1>Important Child Qualities Around the World</h1>
@@ -227,7 +235,7 @@ var margin = {top: 0, right: 0, bottom: 0, left: 0},
 
 var color = d3.scaleThreshold()
     .domain([10,20,30,40,50,60,70,80,90,100])
-    .range(["rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)", "rgb(0,0,0)"]);
+    .range(["rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(77, 159, 209)","rgb(47, 133, 206)","rgb(33, 96, 160)","rgb(23, 83, 145)","rgb(13, 68, 124)", "rgb(5, 58, 112)"]);
 
 var path = d3.geoPath();
 
@@ -238,8 +246,27 @@ var svg = d3.select("body")
             .append('g')
             .attr('class', 'map');
 
+var svgDefs = svg.append('defs');
+
+var mainGradient = svgDefs.append('linearGradient')
+    .attr('id', 'mainGradient');
+
+mainGradient.append('stop')
+    .attr('class', 'stop-left')
+    .attr('offset', '0');
+
+mainGradient.append('stop')
+    .attr('class', 'stop-right')
+    .attr('offset', '1');
+
+svg.append("rect")
+.classed('filled', true)
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("fill", "rgb(172, 249, 239)");
+
 var projection = d3.geoMercator()
-                   .scale(130)
+                   .scale(150)
                   .translate( [width / 2, height / 1.5]);
 
 var path = d3.geoPath().projection(projection);
@@ -248,7 +275,7 @@ svg.call(tip);
 
 queue()
     .defer(d3.json, "https://ranjini1992.github.io/world_data/world_countries.json")
-    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_population.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2010_14.tsv")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
@@ -425,6 +452,7 @@ slider.insert("g", ".track-overlay")
   .enter().append("text")
     .attr("x", x)
     .attr("text-anchor", "middle")
+    .style("fill", "white")
     .text(function(d) { if(d < 20) { return (d + 1995) + "-" + (d + 1995 + 4) } });
 
 var handle = slider.insert("circle", ".track-overlay")
@@ -509,5 +537,18 @@ function onchange() {
 };
 
 </script>
+
+<h4> Analytical Trail</h4>
+This data was taken from World Values Survey (www.worldvaluessurvey.org) which studies changing values and their impact on social and political life. I chose important children qualities because they are different from usual factors like GDP, poverty, literacy rate and it can add some perspective to our knowledge of the world.
+<br>
+<h4> Interesting Insights </h4>
+1. Tolerance and Responsibility are important child qualities irrespective of culture but Imagination is not. <br>
+2. Being thrifty is a more important child quality in Eastern countries than Western countries. <br>
+3. In China, religious faith as a child quality dropped drastically from 2000 to 2005. <br>
+4. Surprisingly, obedience is a more important child quality in the USA than in China. <br>
+5. Hardwork is not an important child quality in Germany, Poland and Nordic countries unlike what stereotypes suggest. <br>
+<h4> Manipulating Data </h4>
+First I collected data of ten child qualities from WVS for four time phases in spreadsheets. Then, I matched them to their country code. I got the basic code of an interactive map from http://bl.ocks.org/jeremycflin/b43ab253f3ae02dced07 which visualized population because it had the Mercator projection of world which is familiar to most of us. Then, I added a drop-down list, legend and slider to visualise ten qualities in a span of 20 years. 
+
 </body>
 </html>
