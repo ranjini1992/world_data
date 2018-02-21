@@ -141,7 +141,7 @@
 
 </style>
 <body>
-  <h1>Important Child Qualities Around the World</h1>
+  <h1>Important Child Qualities and Human Development Index Around the World</h1>
   <h6 style ="float:right"> 100% </h6>
   <div class="box blue10"></div>
   <div class="box blue9"></div>
@@ -162,7 +162,7 @@
 <script src="d3-tip.js"></script>
 
 <script>
-var data = ["Independence", "Hardwork", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience"];
+var data = ["Independence", "Hardwork", "Feeling of responsibility", "Imagination", "Tolerance and respect for other people", "Thrift saving money and things", "Determination, perseverance", "Religious faith", "Unselfishness", "Obedience", "Human Development Index"];
 
 var select = d3.select('body')
   .append('select')
@@ -220,6 +220,9 @@ var format = d3.format(",");
             }
             else if(d["obedience_" + year] && dropdown_val == "Obedience") { 
                toottip_text+= "<span class='details'>" + d["obedience_" + year] +"%</span>";
+            }
+            else if(d["hdi_" + year] && dropdown_val == "Human Development Index") { 
+               toottip_text+= "<span class='details'>" + (d["hdi_" + year]/100).toFixed(2) +"</span>";
             }
             else{
               toottip_text+=  "No data in this time period";
@@ -279,6 +282,7 @@ queue()
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2005_09.tsv")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_2000_04.tsv")
     .defer(d3.tsv, "https://ranjini1992.github.io/world_data/world_1995_99.tsv")
+    .defer(d3.tsv, "https://ranjini1992.github.io/world_data/hdi.tsv")
     .await(ready);
 
 var countries;
@@ -293,10 +297,10 @@ var determinationById =  [{},{},{},{}];
 var religionById =  [{},{},{},{}];
 var unselfishnessById =  [{},{},{},{}];
 var obedienceById = [{},{},{},{}];
+var hdiById = [{},{},{},{}];
 
 
-
-function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest) {
+function ready(error, data, world_data, world_data_old, world_data_older, world_data_oldest, hdi) {
 
   world_data_oldest.forEach(function(d) { 
     var year = 0;
@@ -357,6 +361,14 @@ function ready(error, data, world_data, world_data_old, world_data_older, world_
       
     });
 
+
+  hdi.forEach(function(d) { 
+      hdiById[0][d.id] = 0;
+      hdiById[1][d.id] = d[1];
+      hdiById[2][d.id] = d[2];
+      hdiById[3][d.id] = d[3];
+  });
+
   data.features.forEach(function(d) { 
     for(var i= 0; i < 4; i++ ){
       d["thrifty_" + i] = thriftById[i][d.id]; 
@@ -369,8 +381,10 @@ function ready(error, data, world_data, world_data_old, world_data_older, world_
       d["religion_" + i] = religionById[i][d.id]; 
       d["unselfishness_" + i] = unselfishnessById[i][d.id];
       d["obedience_" + i] = obedienceById[i][d.id]; 
+      d["hdi_" + i] = hdiById[i][d.id]; 
     }
   });
+
 
   countries = svg.append("g")
       .attr("class", "countries")
@@ -518,20 +532,25 @@ function onchange() {
     else if(obedienceById[year][id] && dropdown_val == "Obedience") { 
       countries._groups[0][i].style.fill = color(obedienceById[year][id]);
     }
+    else if(hdiById[year][id] && dropdown_val == "Human Development Index") { 
+      countries._groups[0][i].style.fill = color(hdiById[year][id]);
+    }
   }
 };
 
 </script>
 
 <h4> Analytical Trail</h4>
-This data was taken from <a href = "http://www.worldvaluessurvey.org/wvs.jsp" target="_blank"> World Values Survey </a> which studies changing values and their impact on social and political life. I chose important children qualities because they are different from usual factors like GDP, poverty, literacy rate and it can add some perspective to our knowledge of the world.
+The child qualities survey data was taken from <a href = "http://www.worldvaluessurvey.org/wvs.jsp" target="_blank"> World Values Survey </a> which studies changing values and their impact on social and political life and Human development index data was taken from <a href = "https://www.gapminder.org" target="_blank"> Gapminder </a>. I chose important child qualities because it subjective data compared to objective factors like life expectancy, education, and per capita income indicators that are used to calculate Human Development Index. Comparing child qualities to development can add some perspective to our knowledge of the world.
 <br>
 <h4> Interesting Insights </h4>
 1. Tolerance and Responsibility are important child qualities irrespective of culture but Imagination is not. <br>
 2. Being thrifty is a more important child quality in Eastern countries than Western countries. <br>
 3. In China, religious faith as a child quality dropped drastically from 2000 to 2009. <br>
 4. Obedience is a more important child quality in the USA than in China, surprisingly. <br>
-5. Hardwork is not an important child quality in Germany, Poland and Nordic countries unlike what stereotypes suggest. <br>
+5. Hardwork is not an important child quality in Germany, Poland and Nordic countries unlike what stereotypes 
+suggest. <br> 
+6. Lots of developed countries with high HDI had lower percentage of people who rated most child qualities as important compared to developing countries with lower HDI. <br>
 <h4> Manipulating Data </h4>
 First I collected data of ten child qualities from WVS for four time phases in spreadsheets. Then, I matched them to their country code. I got the basic code of an interactive map from <a href= "http://bl.ocks.org/jeremycflin/b43ab253f3ae02dced07" target="_blank"> here </a>because it had the Mercator projection of world which is familiar to most of us. Then, I added a drop-down list, legend and slider to visualise ten qualities in a span of 20 years. 
 
